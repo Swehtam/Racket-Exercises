@@ -187,11 +187,9 @@
 ;; (remove-duplicatas lst) retorna uma lista com os mesmos elementos de lst mas
 ;; sem que nenhum item ocorra mais de uma vez.
 (define (remove-duplicatas lst)
-  (define (remove-duplicatas-acc lst acc-l)
-    (cond [(empty? lst) acc-l]
-          [else (remove-duplicatas-acc (remove-todos (first lst) (rest lst))
-                                       (append acc-l (list (first lst))))]))
-  (remove-duplicatas-acc lst '()))
+  (cond [(empty? lst) '()]
+        [else (cons (first lst)
+                    (remove-duplicatas (remove-todos (first lst) (rest lst))))]))
 
 ;; Um outro nome para a mesma função poderia ser lista->conjunto, enfatizando a
 ;; sua aplicação na criação de conjuntos a partir de listas. Nesse caso podemos
@@ -224,12 +222,10 @@
 ;; Escreva a função uniao tal que
 ;; (uniao c1 c2) retorna um conjunto contendo os elementos de c1 e c2, sem duplicações.
 (define (uniao c1 c2)
-  (define (uniao-acc c1 c2 acc-l)
-    (cond [(empty? c1) (append acc-l c2)]
-          [(empty? c2) (append acc-l c1)]
-          [else (uniao-acc (rest c1) (remove-todos (first c1) c2)
-                           (append acc-l (list (first c1))))]))
-  (uniao-acc c1 c2 '()))
+  (cond [(empty? c1) c2]
+        [(empty? c2) c1]
+        [else (cons (first c1)
+                    (uniao (rest c1) (remove-todos (first c1) c2)))]))
 
 ;; Implementacao alternativa sem recursao
 (define (uniao2 c1 c2)
@@ -263,12 +259,9 @@
 ;; (interseccao c1 c2) retorna um conjunto contendo os elementos que ocorrem
 ;; em ambos c1 e c2
 (define (interseccao c1 c2)
-  (define (interseccao-acc c1 c2 acc-l)
-    (cond [(or (empty? c1) (empty? c2)) acc-l]
-          [(pertence? (first c1) c2) (interseccao-acc (rest c1) c2
-                                                      (append acc-l (list (first c1))))]
-          [else (interseccao-acc (rest c1) c2 acc-l)]))
-  (interseccao-acc c1 c2 '()))
+  (cond [(or (empty? c1) (empty? c2)) '()]
+        [(pertence? (first c1) c2) (cons (first c1) (interseccao (rest c1) c2))]
+        [else (interseccao (rest c1) c2)]))
 
 (define-test-suite test-interseccao
   (test-equal? "Conjuntos vazios"        (interseccao '()      '())      '())
